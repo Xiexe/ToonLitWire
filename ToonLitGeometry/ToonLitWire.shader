@@ -74,7 +74,6 @@ Shader "Xiexe/ToonLitWire" {
 				return OUT;
 			}
 
-			
 			[maxvertexcount(16)]
 			void geom(triangle VertexInput IN[3], uint pid : SV_PrimitiveID, inout LineStream<g2f> tristream)
 			{
@@ -107,13 +106,16 @@ Shader "Xiexe/ToonLitWire" {
 				float nDotl = DotClamped(lightDir, worldNormal);
 			
                 //lighting
-				float3 indirectLight = ShadeSH9(float4(worldNormal,1));
+				half3 shadeSH9Light = ShadeSH9(float4(worldNormal,1));
+				half3 reverseShadeSH9Light = ShadeSH9(float4(-worldNormal,1));
+				half3 noAmbientShadeSH9Light = (shadeSH9Light - reverseShadeSH9Light)/2;
+				
+				float3 indirectLight = noAmbientShadeSH9Light * 0.5 + 0.533;
 				float3 lightintensity = ShadeSH9(float4(0,0,0,1));
 
 				float light_Env = float(any(_WorldSpaceLightPos0.xyz));
 
-				float2 modifiedUV = lerp(indirectLight, nDotl, light_Env) * 0.5 + 0.5;
-
+				float2 modifiedUV = lerp(indirectLight, nDotl, light_Env);		
 				float2 rampUV = float2(modifiedUV.x, modifiedUV.y);
 				float3 shadowRamp = tex2D(_ShadowRamp, (rampUV));
 				
