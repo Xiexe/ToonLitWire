@@ -70,7 +70,7 @@ Shader "Xiexe/ToonLitWire" {
 			}
 
 			[maxvertexcount(3)]
-			void geom(triangle VertexInput IN[3], uint pid : SV_PrimitiveID, inout TriangleStream<g2f> tristream)
+			void geom(triangle VertexInput IN[3], uint pid : SV_PrimitiveID, inout LineStream<g2f> tristream)
 			{
 				g2f o;
 				//tristream.RestartStrip();
